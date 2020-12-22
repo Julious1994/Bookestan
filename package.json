@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-hook/debounce": "^3.0.0",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/picker": "^1.8.1",
@@ -19,19 +20,24 @@
     "prop-types": "^15.7.2",
     "react": "16.13.1",
     "react-native": "0.63.4",
-    "react-native-fetch-blob": "^0.10.8",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modal": "^11.5.6",
+    "react-native-oauth": "^2.1.18",
     "react-native-reanimated": "^1.13.1",
     "react-native-render-html": "^4.2.4",
     "react-native-safe-area-context": "^3.1.8",
     "react-native-screens": "^2.12.0",
+    "react-native-shadow": "^1.2.2",
     "react-native-share": "^4.1.0",
-    "react-native-video": "4.4.5",
+    "react-native-sound": "^0.11.0",
+    "react-native-sound-player": "^0.10.5",
+    "react-native-svg": "^12.1.0",
+    "react-native-vector-icons": "^7.1.0",
+    "react-native-video": "^5.1.0-alpha8",
     "react-native-video-controls": "^2.7.1",
-    "react-native-webview": "^10.10.0"
+    "react-native-webview": "^11.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

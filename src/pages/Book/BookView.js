@@ -115,15 +115,18 @@ function BookView(props) {
 		navigation.dispatch(StackActions.push('Cart'));
 	}, [navigation]);
 
-	const handleStar = React.useCallback(() => {
+	const handleStar = React.useCallback((isAdd = true) => {
+		console.log('clicked', bookDetails.BookID)
 		services
 			.post(
 				`?action=LikeAudioBook&CustomerID=${state.user.CustomerID}&BooKID=${bookDetails.BookID}`,
 			)
 			.then((res) => {
-				dispatch({type: 'ADD_LIKE', data: {...bookDetails}});
+				console.log(res);
+				const actionType = isAdd ? 'ADD_LIKE' : 'REMOVE_LIKE';
+				dispatch({type: actionType, data: {...bookDetails}});
 				setBookDetails((_book) => {
-					return {..._book, LikeCount: Number(_book.LikeCount) + 1};
+					return {..._book, LikeCount: Number(_book.LikeCount) + (isAdd ? 1 : -1)};
 				});
 			});
 	}, [state, bookDetails, dispatch]);
@@ -137,9 +140,10 @@ function BookView(props) {
 		if (book.BookID) {
 			services.get(`?action=BookDetail&BookID=${book.BookID}`).then((res) => {
 				dispatch({type: 'SET_LOADING', loading: false});
+				console.log(res);
 				if (res.success === '1') {
 					if (Array.isArray(res.data)) {
-						setBookDetails({...res.data[0], audioList: [...res.BookDetail]});
+						setBookDetails({...res.data[0], audioList: [...res.BookDetail], tagList: [...res.TagList]});
 					}
 				} else {
 					Alert.alert('Not found', 'Book not found');
@@ -172,6 +176,7 @@ function BookView(props) {
 
 	const isLiked =
 		state.likes.findIndex((l) => l.BookID === bookDetails.BookID) !== -1;
+	console.log(bookDetails);
 	return (
 		<Page>
 			<View style={[commonStyles.pageStyle, styles.container]}>
@@ -222,6 +227,15 @@ function BookView(props) {
 								{`by ${bookDetails.Author}`}
 							</Typography>
 						)}
+						{
+							bookDetails.tagList.length > 0 &&
+							<View style={styles.tagsView}>
+								{/* <Icon 	name="book" size={32} /> */}
+								<Typography variant="body" style={styles.author}>{
+									bookDetails.tagList.map(tag => tag.TagName).join(", ")
+								}</Typography>
+							</View>
+						}
 						{bookDetails.Price && (
 							<Typography variant="title3" style={styles.price}>
 								{`$ ${bookDetails.Price}`}
@@ -234,20 +248,20 @@ function BookView(props) {
 									{`${bookDetails.LikeCount}`}
 								</Typography>
 							)}
-							{isLiked ? (
+							{/* {isLiked ? (
 								<Icon name="star" color="#66837B" size={32} />
-							) : (
-								<TouchableOpacity onPress={handleStar}>
-									<Icon name="star-border" color="#66837B" size={32} />
+							) : ( */}
+								<TouchableOpacity onPress={() => handleStar(isLiked ? false : true)}>
+									<Icon name={isLiked ? "star" : "star-border"} color="#66837B" size={32} />
 								</TouchableOpacity>
-							)}
+							{/* )} */}
 						</View>
 						<View style={styles.contentView}>
 							<View></View>
 							<Typography variant="title2" style={styles.aboutText}>
 								About The Book
 							</Typography>
-							<ScrollView style={{height: '35%'}}>
+							<ScrollView style={{height: '30%'}}>
 								<Typography variant="description" style={styles.description}>
 									{bookDetails.Description}
 								</Typography>
@@ -444,6 +458,11 @@ const styles = StyleSheet.create({
 		marginLeft: 2,
 		marginRight: 7,
 	},
+	tagsView: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+	}
 });
 
 export default BookView;

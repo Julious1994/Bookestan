@@ -27,7 +27,7 @@ export const reducer = (state, action) => {
 			return {
 				...state,
 				...action.credential,
-				credential: {...action.credential},
+				credential: { ...action.credential },
 			};
 		case 'TOGGELE_DRAWER':
 			return {
@@ -47,7 +47,17 @@ export const reducer = (state, action) => {
 		case 'ADD_LIKE':
 			return {
 				...state,
-				likes: [...state.likes, {...action.data}],
+				likes: [...state.likes, { ...action.data }],
+			};
+		case 'REMOVE_LIKE':
+			let list = [...state.likes];
+			const index = state.likes.findIndex(l => l.BookID === action.data.BookID);
+			if (index !== -1) {
+				list.splice(index, 1);
+			}
+			return {
+				...state,
+				likes: [...list],
 			};
 		case 'SET_LOADING':
 			return {
@@ -57,7 +67,7 @@ export const reducer = (state, action) => {
 		case 'ADD_CART':
 			return {
 				...state,
-				cart: [...state.cart, {...action.payload}],
+				cart: [...state.cart, { ...action.payload }],
 			};
 		case 'SET_CART':
 			return {

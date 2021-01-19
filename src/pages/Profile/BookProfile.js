@@ -78,11 +78,15 @@ function BookProfile(props) {
 
 	const handleBook = React.useCallback(
 		(book) => {
+			let purchased = {};
+			if(activeTab !== 2) {
+				purchased = {purchased: true}
+			}
 			navigation.dispatch(
-				StackActions.push('BookView', {book, purchased: true}),
+				StackActions.push('BookView', {book, ...purchased}),
 			);
 		},
-		[navigation],
+		[navigation, activeTab],
 	);
 
 	React.useEffect(() => {

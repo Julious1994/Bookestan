@@ -16,16 +16,17 @@ import {StackActions} from '@react-navigation/native';
 import Service from '../services/http';
 import Page from '../components/Page';
 import {useStateValue} from '../store/store';
+// import twitter, { auth } from "react-native-twitter";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import OAuthManager from 'react-native-oauth';
+// import OAuthManager from 'react-native-oauth';
 const config = {
 	twitter: {
-		consumer_key: 'ecJnjMHdgPqcA5oHqGqYLX0MN',
-		consumer_secret: '9LZ6cAuE1KkeWuRPgnMMZAG1nbOHARtfvpinUzHgrTXwWtgLI9',
+		consumerKey: 'ecJnjMHdgPqcA5oHqGqYLX0MN',
+		consumerSecret: '9LZ6cAuE1KkeWuRPgnMMZAG1nbOHARtfvpinUzHgrTXwWtgLI9',
 	},
 };
-const manager = new OAuthManager('bookestan');
-manager.configure(config);
+// const manager = new OAuthManager('bookestan');
+// manager.configure(config);
 const services = new Service();
 
 function Login(props) {
@@ -97,19 +98,20 @@ function Login(props) {
 	}, [dispatch, navigation]);
 
 	const handleTwitterLogin = React.useCallback(() => {
-		manager.authorize('twitter', {fields: 'screen_name'}).then((resp) => {
-			const {response} = resp;
-			if (resp.authorized) {
-				const userTimelineUrl = `https://api.twitter.com/1.1/users/show.json?user_id=${resp.response.uuid}`;
-				manager.makeRequest('twitter', userTimelineUrl).then((result) => {
-					socialLogin({
-						name: result.data.name,
-						token: response.credentials.access_token,
-					});
-				});
-			} else {
-			}
-		});
+
+		// manager.authorize('twitter', {fields: 'screen_name'}).then((resp) => {
+		// 	const {response} = resp;
+		// 	if (resp.authorized) {
+		// 		const userTimelineUrl = `https://api.twitter.com/1.1/users/show.json?user_id=${resp.response.uuid}`;
+		// 		manager.makeRequest('twitter', userTimelineUrl).then((result) => {
+		// 			socialLogin({
+		// 				name: result.data.name,
+		// 				token: response.credentials.access_token,
+		// 			});
+		// 		});
+		// 	} else {
+		// 	}
+		// });
 	}, [socialLogin]);
 
 	const socialLogin = React.useCallback(
@@ -200,7 +202,7 @@ function Login(props) {
 						/>
 					</TouchableOpacity>
 				</View>
-				<Typography variant="body" style={styles.signinoptionsText}>
+				{/* <Typography variant="body" style={styles.signinoptionsText}>
 					or sign in with
 				</Typography>
 				<View style={styles.socialContainer}>
@@ -227,7 +229,7 @@ function Login(props) {
 							resizeMode="contain"
 						/>
 					</TouchableOpacity>
-				</View>
+				</View> */}
 			</View>
 		</Page>
 	);

@@ -130,7 +130,7 @@ function Signup(props) {
 					<Input
 						style={styles.input}
 						value={credential.MobileNumber}
-						placeholder="Enter your Email"
+						placeholder="Enter your mobile number"
 						label="Mobile Number"
 						onChange={(value) => handleChange('MobileNumber', value)}
 						left={true}

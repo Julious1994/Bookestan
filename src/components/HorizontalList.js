@@ -50,9 +50,9 @@ function HorizontalList(props) {
 						<Typography variant="title3" style={styles.bookName} lines={1}>
 							{item.Title}
 						</Typography>
-						<Typography variant="body" style={styles.duration}>
+						{/* <Typography variant="body" style={styles.duration}>
 							{`$ ${item.Price}`}
-						</Typography>
+						</Typography> */}
 					</View>
 				))}
 			</ScrollView>

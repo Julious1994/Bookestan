@@ -8,17 +8,38 @@ import {
 	TouchableOpacity,
 	ScrollView,
 } from 'react-native';
-import Typography from './../../components/Typography';
-import Input from './../../components/Input';
-import Button from './../../components/Button';
-import commonStyles from './../../commonStyles';
-import imageMapper from './../../images/imageMapper';
-import Service from '../../services/http';
-import ScrollablePageView from '../../components/ScrollablePageView';
-import {useStateValue} from '../../store/store';
+import Typography from './../../../components/Typography';
+import Input from './../../../components/Input';
+import Button from './../../../components/Button';
+import commonStyles from './../../../commonStyles';
+import imageMapper from './../../../images/imageMapper';
+import Service from '../../../services/http';
+import {isExpired} from '../../../utils';
+
+import ScrollablePageView from '../../../components/ScrollablePageView';
+import {useStateValue} from '../../../store/store';
 import {StackActions} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import PaymentSuccess from './PaymentSuccess';
+import PaymentSuccess from './../PaymentSuccess';
+import RNIap, {
+    Product,
+    ProductPurchase,
+    PurchaseError,
+    acknowledgePurchaseAndroid,
+    purchaseErrorListener,
+    purchaseUpdatedListener,
+} from 'react-native-iap';
+import moment from "moment";
+
+const itemSkus = Platform.select({
+    ios: [
+     '1'
+    ],
+    android: [
+     '1'
+    ]
+   });
+   
 
 function Header(props) {
 	const {navigation} = props;
@@ -45,7 +66,8 @@ function Cart(props) {
 	}, 0);
 
 	const handleContinue = React.useCallback(() => {
-		navigation.dispatch(StackActions.push('PaypalPayment', {amount: total}));
+		// navigation.dispatch(StackActions.push('PaypalPayment', {amount: total}));
+        getItems();
 	}, [navigation, total]);
 
 	const handleDelete = React.useCallback(
@@ -55,58 +77,64 @@ function Cart(props) {
 		[dispatch],
 	);
 
+    const getItems = async () => {
+        try {
+          console.log('itemSkus[0]', itemSkus[0]);
+          const products = await RNIap.getProducts(itemSkus);
+          console.log('Products[0]', products[0]);
+          RNIap.requestPurchase(itemSkus[0]);
+        } catch (err) {
+          console.log('getItems || purchase error => ', err);
+        }
+      };
+
+	React.useEffect(() => {
+		async function init() {
+            const result = await RNIap.initConnection();
+		}
+		RNIap.purchaseUpdatedListener(async (purchase) => {
+			try {
+				const receipt = purchase.transactionId;
+				if(receipt) {
+					if (state.user && state.user.CustomerID) {
+						
+						setLoading(false);
+						navigation.dispatch(StackActions.replace('BookProfile'));
+					}
+				}
+			} catch(err) {
+				Alert.alert('Listener error', err.message);
+			}
+		});
+		init();
+	}, []);
+
 	return (
 		<ScrollablePageView
 			header={<Header navigation={navigation} state={state} />}
 			bottomBar={
-				<Button
+				isExpired(state.user.PlanExpire) && <Button
 					title="Subscribe Now"
 					style={styles.continueButton}
 					onPress={handleContinue}
 				/>
 			}>
 			<View style={styles.content}>
-				{state.cart.map((cartItem, i) => (
-					<View key={i} style={styles.cartItemView}>
-						<View>
-							<View style={[styles.imageView]} elevation={3}>
-								<Image
-									source={{uri: cartItem.CoverImagePath}}
-									style={[styles.image]}
-								/>
-							</View>
-						</View>
-						<View style={styles.infoView}>
-							<View style={styles.upperRow}>
-								<View>
-									<Typography variant="title3" style={styles.title}>
-										{cartItem.Title}
-									</Typography>
-									<Typography variant="description" style={styles.author}>
-										{cartItem.Author}
-									</Typography>
-								</View>
-								<TouchableOpacity onPress={() => handleDelete(i)}>
-									<View style={styles.cancelIcon}>
-										<Icon name="close" color="#66837B" />
-									</View>
-								</TouchableOpacity>
-							</View>
-							<View style={styles.lowerRow}>
-								<View />
-								<Typography variant="title3">{`$ ${cartItem.Price}`}</Typography>
-							</View>
-						</View>
-					</View>
-				))}
+				
 				<View style={styles.totalView}>
 					<Typography variant="title3" style={styles.totalText}>
-						Total
+						Current Subscription
 					</Typography>
 					<Typography variant="title2" style={styles.total}>
-						{`$ ${total}`}
+						{`$ 19.99/m`}
 					</Typography>
 				</View>
+				{
+					isExpired(state.user.PlanExpire) ?
+                		<Typography variant="description">Plan expired {moment(state.user.PlanExpire).fromNow()}</Typography>
+					:
+                		<Typography variant="description">Subscription will expire {moment(state.user.PlanExpire).fromNow()}</Typography>
+				}
 			</View>
 		</ScrollablePageView>
 	);

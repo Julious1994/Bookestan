@@ -14,10 +14,13 @@ import PaymentForm from './pages/Checkout/Payment';
 import PaypalPayment from './pages/Checkout/Paypal';
 import BookPlayer from './pages/Book/BookPlayer';
 import BookAudioList from './pages/Book/BookAudioList';
+import Subscribe from "./pages/Checkout/Subscription/Subscribe";
 
 const routes = (Stack) => (
 	<Stack.Navigator screenOptions={{headerShown: false}}>
 		<Stack.Screen name="Login" component={LoginScreen} key="login" />
+		<Stack.Screen name="Subscribe" component={Subscribe} key="subscribe" />
+
 		<Stack.Screen name="PaypalPayment" component={PaypalPayment} key="paypal" />
 		<Stack.Screen name="Home" component={HomeScreen} />
 		<Stack.Screen name="Signup" component={SignupScreen} key="signup" />

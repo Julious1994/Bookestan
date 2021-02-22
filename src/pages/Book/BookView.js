@@ -20,6 +20,7 @@ import {StackActions} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AudioPlayer from 'react-native-sound-player';
 import Loader from '../../components/Loader';
+import {isExpired} from "../../utils";
 
 const services = new Service();
 
@@ -132,7 +133,12 @@ function BookView(props) {
 	}, [state, bookDetails, dispatch]);
 
 	const handleListen = React.useCallback(() => {
-		navigation.dispatch(StackActions.push('BookAudioList', {bookDetails}));
+		if(isExpired(state.user.PlanExpire)) {
+			navigation.dispatch(StackActions.push('Subscribe', {bookDetails}));
+		} else {
+			navigation.dispatch(StackActions.push('BookAudioList', {bookDetails}));
+		}
+
 	}, [bookDetails, navigation]);
 
 	React.useEffect(() => {
@@ -185,7 +191,7 @@ function BookView(props) {
 						<Image source={imageMapper.back.source} style={styles.backIcon} />
 					</TouchableOpacity>
 				</View>
-				{!purchased && (
+				{/* {!purchased && (
 					<TouchableOpacity
 						style={styles.rightMenuItemView}
 						onPress={handleCart}>
@@ -199,7 +205,7 @@ function BookView(props) {
 							</View>
 						)}
 					</TouchableOpacity>
-				)}
+				)} */}
 				{bookDetails.BookID && (
 					<View style={styles.content}>
 						<Image
@@ -236,11 +242,11 @@ function BookView(props) {
 								}</Typography>
 							</View>
 						}
-						{bookDetails.Price && (
+						{/* {bookDetails.Price && (
 							<Typography variant="title3" style={styles.price}>
 								{`$ ${bookDetails.Price}`}
 							</Typography>
-						)}
+						)} */}
 						<View style={styles.likeContainer}>
 							<Icon name="person" color="#66837B" />
 							{bookDetails.LikeCount !== undefined && (
@@ -261,7 +267,7 @@ function BookView(props) {
 							<Typography variant="title2" style={styles.aboutText}>
 								About The Book
 							</Typography>
-							<ScrollView style={{height: '30%'}}>
+							<ScrollView style={{height: '42%'}}>
 								<Typography variant="description" style={styles.description}>
 									{bookDetails.Description}
 								</Typography>
@@ -269,7 +275,7 @@ function BookView(props) {
 						</View>
 
 						<View style={styles.cartView}>
-							{!purchased ? (
+							{/* {!purchased ? (
 								<React.Fragment>
 									<TouchableOpacity
 										style={styles.cartButton}
@@ -286,14 +292,14 @@ function BookView(props) {
 										onPress={handleBuyNow}
 									/>
 								</React.Fragment>
-							) : (
+							) : ( */}
 								<Button
 									style={styles.buyButton}
 									title={'Listen Now'}
 									textStyle={styles.buyButtonText}
 									onPress={handleListen}
 								/>
-							)}
+							{/* )} */}
 						</View>
 					</View>
 				)}

@@ -23,13 +23,17 @@ import {getInitial} from '../../utils';
 
 const services = new Service();
 
-const tabs = [{title: 'Listened'}, {title: 'Purchased'}, {title: 'Likes'}];
+const tabs = [
+	{title: 'Listened'}, 
+	// {title: 'Purchased'}, 
+	{title: 'Likes'}
+];
 const ScreenWidth = Dimensions.get('window').width;
 const bookLength = (ScreenWidth - 72) / 2;
 
 function BookProfile(props) {
 	const {navigation} = props;
-	const [activeTab, setActiveTab] = React.useState(1);
+	const [activeTab, setActiveTab] = React.useState(0);
 	const [state, dispatch] = useStateValue();
 	const [loading, setLoading] = React.useState(false);
 	const [data, setData] = React.useState([]);

@@ -24,6 +24,10 @@ function Setting(props) {
 		navigation.dispatch(StackActions.push('EditProfile'));
 	}, [navigation]);
 
+	const handleSubscribe = React.useCallback(() => {
+		navigation.dispatch(StackActions.push('Subscribe'));
+	}, [navigation]);
+
 	const handleLogout = React.useCallback(() => {
 		logout(navigation);
 	}, [navigation]);
@@ -79,6 +83,20 @@ function Setting(props) {
 								containerStyle={styles.optionTitleContainer}
 								style={styles.optionTitle}>
 								Change Password
+							</Typography>
+							<Icon name="chevron-right" size={24} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.optionView}>
+						<TouchableOpacity
+							style={styles.changePasswordIcon}
+							onPress={handleSubscribe}>
+							<Icon name="lock" size={24} />
+							<Typography
+								variant="title3"
+								containerStyle={styles.optionTitleContainer}
+								style={styles.optionTitle}>
+								My Subscription
 							</Typography>
 							<Icon name="chevron-right" size={24} />
 						</TouchableOpacity>

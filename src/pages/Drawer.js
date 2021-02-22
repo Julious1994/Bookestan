@@ -18,6 +18,7 @@ function Drawer(props) {
 	}, [navigation]);
 
 	const handleBooks = React.useCallback(() => {
+		handleClose();
 		navigation.dispatch(StackActions.push('BookProfile'));
 	}, [navigation]);
 

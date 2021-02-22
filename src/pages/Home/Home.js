@@ -62,7 +62,7 @@ function Header(props) {
 						style={styles.rightMenuItemIcon}
 					/>
 				</TouchableOpacity> */}
-				<TouchableOpacity style={styles.rightMenuItemView} onPress={handleCart}>
+				{/* <TouchableOpacity style={styles.rightMenuItemView} onPress={handleCart}>
 					<Image
 						source={imageMapper.cart.source}
 						style={styles.rightMenuItemIcon}
@@ -72,7 +72,7 @@ function Header(props) {
 							<Text style={styles.tagText}>{state.cart.length}</Text>
 						</View>
 					)}
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 			</View>
 		</View>
 	);

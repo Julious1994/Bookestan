@@ -7,6 +7,7 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
+	SliderBase,
 } from 'react-native';
 import Typography from './../../../components/Typography';
 import Input from './../../../components/Input';
@@ -31,12 +32,14 @@ import RNIap, {
 } from 'react-native-iap';
 import moment from "moment";
 
+const services = new Service();
+
 const itemSkus = Platform.select({
     ios: [
-     '1'
+	 'com.bookestan.19'
     ],
     android: [
-     '1'
+     'com.bookestan.19'
     ]
    });
    
@@ -81,7 +84,7 @@ function Cart(props) {
         try {
           console.log('itemSkus[0]', itemSkus[0]);
           const products = await RNIap.getProducts(itemSkus);
-          console.log('Products[0]', products[0]);
+          console.log('Products[0]', products);
           RNIap.requestPurchase(itemSkus[0]);
         } catch (err) {
           console.log('getItems || purchase error => ', err);
@@ -91,15 +94,26 @@ function Cart(props) {
 	React.useEffect(() => {
 		async function init() {
             const result = await RNIap.initConnection();
+			console.log({result});
 		}
+		purchaseErrorListener(async (error) => {
+			Alert.alert("Error", error.message);
+		});
 		RNIap.purchaseUpdatedListener(async (purchase) => {
 			try {
 				const receipt = purchase.transactionId;
 				if(receipt) {
 					if (state.user && state.user.CustomerID) {
-						
-						setLoading(false);
-						navigation.dispatch(StackActions.replace('BookProfile'));
+						const response = await services.post(
+						`?action=GetSubscription&CustomerID=${state.user.CustomerID}`,
+						);
+							console.log(response);
+							if(response.res && response.status === 200) {
+								Alert.alert("Success", response.res.data);
+								navigation.dispatch(StackActions.replace('Home'));
+							} else {
+								Alert.alert("Failed", "Failed to purchase. Contact support team.");
+							}
 					}
 				}
 			} catch(err) {

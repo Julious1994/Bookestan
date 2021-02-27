@@ -15,37 +15,37 @@ import Button from './../../../components/Button';
 import commonStyles from './../../../commonStyles';
 import imageMapper from './../../../images/imageMapper';
 import Service from '../../../services/http';
-import {isExpired} from '../../../utils';
+import { isExpired } from '../../../utils';
 
 import ScrollablePageView from '../../../components/ScrollablePageView';
-import {useStateValue} from '../../../store/store';
-import {StackActions} from '@react-navigation/native';
+import { useStateValue } from '../../../store/store';
+import { StackActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PaymentSuccess from './../PaymentSuccess';
 import RNIap, {
-    Product,
-    ProductPurchase,
-    PurchaseError,
-    acknowledgePurchaseAndroid,
-    purchaseErrorListener,
-    purchaseUpdatedListener,
+	Product,
+	ProductPurchase,
+	PurchaseError,
+	acknowledgePurchaseAndroid,
+	purchaseErrorListener,
+	purchaseUpdatedListener,
 } from 'react-native-iap';
 import moment from "moment";
 
 const services = new Service();
 
 const itemSkus = Platform.select({
-    ios: [
-	 'com.bookestan.19'
-    ],
-    android: [
-     'com.bookestan.19'
-    ]
-   });
-   
+	ios: [
+		'com.bookestan.19'
+	],
+	android: [
+		'com.bookestan.19'
+	]
+});
+
 
 function Header(props) {
-	const {navigation} = props;
+	const { navigation } = props;
 	return (
 		<View style={styles.headerView}>
 			<TouchableOpacity
@@ -62,39 +62,41 @@ function Header(props) {
 }
 
 function Cart(props) {
-	const {navigation} = props;
+	const { navigation } = props;
 	const [state, dispatch] = useStateValue();
+	const [isPurchasing, setIsPurchasing] = React.useState(false);
 	const total = state.cart.reduce((t, item) => {
 		return t + Number(item.Price);
 	}, 0);
 
 	const handleContinue = React.useCallback(() => {
 		// navigation.dispatch(StackActions.push('PaypalPayment', {amount: total}));
-        getItems();
+		getItems();
+		setIsPurchasing(true);
 	}, [navigation, total]);
 
 	const handleDelete = React.useCallback(
 		(index) => {
-			dispatch({type: 'REMOVE_CART', index});
+			dispatch({ type: 'REMOVE_CART', index });
 		},
 		[dispatch],
 	);
 
-    const getItems = async () => {
-        try {
-          console.log('itemSkus[0]', itemSkus[0]);
-          const products = await RNIap.getProducts(itemSkus);
-          console.log('Products[0]', products);
-          RNIap.requestPurchase(itemSkus[0]);
-        } catch (err) {
-          console.log('getItems || purchase error => ', err);
-        }
-      };
+	const getItems = async () => {
+		try {
+			console.log('itemSkus[0]', itemSkus[0]);
+			const products = await RNIap.getProducts(itemSkus);
+			console.log('Products[0]', products);
+			RNIap.requestPurchase(itemSkus[0]);
+		} catch (err) {
+			console.log('getItems || purchase error => ', { ...err });
+		}
+	};
 
 	React.useEffect(() => {
 		async function init() {
-            const result = await RNIap.initConnection();
-			console.log({result});
+			const result = await RNIap.initConnection();
+			console.log({ result });
 		}
 		purchaseErrorListener(async (error) => {
 			Alert.alert("Error", error.message);
@@ -102,26 +104,62 @@ function Cart(props) {
 		RNIap.purchaseUpdatedListener(async (purchase) => {
 			try {
 				const receipt = purchase.transactionId;
-				if(receipt) {
+				if (receipt && isPurchasing) {
 					if (state.user && state.user.CustomerID) {
 						const response = await services.post(
-						`?action=GetSubscription&CustomerID=${state.user.CustomerID}`,
+							`?action=GetSubscription&CustomerID=${state.user.CustomerID}`,
 						);
-							console.log(response);
-							if(response.res && response.status === 200) {
-								Alert.alert("Success", response.res.data);
-								navigation.dispatch(StackActions.replace('Home'));
-							} else {
-								Alert.alert("Failed", "Failed to purchase. Contact support team.");
-							}
+						console.log(response);
+						setIsPurchasing(false);
+						if (response.res && response.status === 200) {
+							Alert.alert("Success", response.res.data, [{
+								text: "OK", onPress: () => {
+									const url = `?action=GetCustomerDetailByID&CustomerID=${userData.CustomerID}`;
+									services.post(url).then(async (res) => {
+										console.log('response', res);
+										if (res.status === 200) {
+											if (res.res.success === '0') {
+												Alert.alert('Login Failure', res.res.data);
+											} else {
+												dispatch({ type: 'SET_USER', userData: res.res });
+												await AsyncStorage.setItem(
+													'user',
+													JSON.stringify({ ...res.res }),
+												);
+												navigation.dispatch(
+													StackActions.replace('Home', {
+														params: { user: { ...credential } },
+													}),
+												);
+											}
+										} else {
+											let message = '';
+											if (Array.isArray(res.res)) {
+												message = res.res[0];
+											} else {
+												message = res.res || res.res.Message;
+											}
+											Alert.alert('Network Error', message);
+										}
+										// navigation.dispatch(
+										// 	StackActions.replace('Home', {
+										// 		params: {user: {...userData}},
+										// 	}),
+										// );
+									});
+								}
+							}]);
+						} else {
+							Alert.alert("Failed", "Failed to purchase. Contact support team.");
+						}
 					}
 				}
-			} catch(err) {
+			} catch (err) {
 				Alert.alert('Listener error', err.message);
 			}
 		});
 		init();
-	}, []);
+	}, [state.user, isPurchasing]);
 
 	return (
 		<ScrollablePageView
@@ -134,7 +172,7 @@ function Cart(props) {
 				/>
 			}>
 			<View style={styles.content}>
-				
+
 				<View style={styles.totalView}>
 					<Typography variant="title3" style={styles.totalText}>
 						Current Subscription
@@ -145,9 +183,9 @@ function Cart(props) {
 				</View>
 				{
 					isExpired(state.user.PlanExpire) ?
-                		<Typography variant="description">Plan expired {moment(state.user.PlanExpire).fromNow()}</Typography>
-					:
-                		<Typography variant="description">Subscription will expire {moment(state.user.PlanExpire).fromNow()}</Typography>
+						<Typography variant="description">{`Plan expired ${moment(state.user.PlanExpire).fromNow()}`}</Typography>
+						:
+						<Typography variant="description">{`Subscription will expire ${moment(state.user.PlanExpire).fromNow()}`}</Typography>
 				}
 			</View>
 		</ScrollablePageView>

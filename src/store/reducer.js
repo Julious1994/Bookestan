@@ -9,10 +9,16 @@ export const initialState = {
 	likes: [],
 	purchasedBooks: [],
 	listenedBooks: [],
+	activeMenu: 0,
 };
 
 export const reducer = (state, action) => {
 	switch (action.type) {
+		case 'activeMenu':
+			return {
+				...state,
+				activeMenu: action.activeMenu,
+			}
 		case 'setToken':
 			return {
 				...state,

@@ -4,6 +4,8 @@ import Typography from './../components/Typography';
 import imageMapper from './../images/imageMapper';
 import {StackActions} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useStateValue} from '../store/store';
 
 function ProfileView({active}) {
 	return (
@@ -34,11 +36,7 @@ function MenuItem(props) {
 	return (
 		<TouchableOpacity style={[styles.menuItem]} onPress={props.onPress}>
 			{props.image && (
-				<Image
-					source={imageMapper[props.image].source}
-					style={[styles.menuImage, props.active && styles.activeMenu]}
-					resizeMode="contain"
-				/>
+				<Icon name={props.image} size={32} color={props.active ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.5)'} />
 			)}
 			{props.component && <Component active={props.active} />}
 			<Typography
@@ -54,13 +52,16 @@ const menus = [
 	{title: 'HOME', page: 'Home', image: 'home'},
 	// {title: 'CATEGORIES', image: 'categories'},
 	// {title: 'MY LIBRARY', page: 'Library', image: 'categories'},
-	{title: 'PROFILE', page: 'BookProfile', image: 'profile'},
+	{title: 'PROFILE', page: 'BookProfile', image: 'person'},
 ];
 
 function BottomBar(props) {
 	const {navigation} = props;
+	const [state, dispatch] = useStateValue();
+
 	const handleRedirect = React.useCallback(
-		(page) => {
+		(page, index) => {
+			dispatch({type: 'activeMenu', activeMenu: index});
 			page && navigation.dispatch(StackActions.push(page));
 		},
 		[navigation],
@@ -78,9 +79,9 @@ function BottomBar(props) {
 					key={i}
 					image={menu.image}
 					component={menu.Component}
-					active={props.active === i}
+					active={state.activeMenu === i}
 					title={menu.title}
-					onPress={() => handleRedirect(menu.page)}
+					onPress={() => handleRedirect(menu.page, i)}
 				/>
 			))}
 		</LinearGradient>

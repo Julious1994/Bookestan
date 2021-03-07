@@ -19,6 +19,7 @@ import Service from '../services/http';
 import Page from '../components/Page';
 import {useStateValue} from '../store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const services = new Service();
 
@@ -105,10 +106,11 @@ function Signup(props) {
 						onChange={(value) => handleChange('Name', value)}
 						left={true}
 						icon={
-							<Image
-								source={imageMapper.messages.source}
-								style={styles.inputIcon}
-								resizeMode="contain"
+							<Icon
+								name="person"
+								size={22}
+								color="#113228"
+								style={styles.lockIcon}
 							/>
 						}
 					/>
@@ -135,10 +137,11 @@ function Signup(props) {
 						onChange={(value) => handleChange('MobileNumber', value)}
 						left={true}
 						icon={
-							<Image
-								source={imageMapper.messages.source}
-								style={styles.inputIcon}
-								resizeMode="contain"
+							<Icon
+								name="phone"
+								size={22}
+								color="#113228"
+								style={styles.lockIcon}
 							/>
 						}
 					/>
@@ -286,6 +289,11 @@ const styles = StyleSheet.create({
 	},
 	registerButton: {
 		marginTop: 15,
+	},
+	lockIcon: {
+		marginTop: 12,
+		marginLeft: 1,
+		marginRight: 5,
 	},
 });
 

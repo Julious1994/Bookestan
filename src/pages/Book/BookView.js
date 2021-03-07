@@ -248,7 +248,6 @@ function BookView(props) {
 							</Typography>
 						)} */}
 						<View style={styles.likeContainer}>
-							<Icon name="person" color="#66837B" />
 							{bookDetails.LikeCount !== undefined && (
 								<Typography variant="description" style={styles.likeCountText}>
 									{`${bookDetails.LikeCount}`}

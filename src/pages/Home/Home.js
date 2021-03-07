@@ -175,10 +175,11 @@ function Home(props) {
 	// }, [dispatch]);
 
 	React.useEffect(() => {
+		dispatch({type: 'SET_LOADING', loading: false});
 		fetchBooks();
 		fetchLikes();
 		fetchData();
-	}, [fetchBooks, fetchLikes, fetchData]);
+	}, [fetchBooks, fetchLikes, fetchData, dispatch]);
 
 	const handleBookPress = React.useCallback(
 		(item, i) => {
@@ -208,7 +209,7 @@ function Home(props) {
 						{state.user?.Name}
 					</Typography>
 				</View>
-				<Typography variant="title1">Have a Nice Day!</Typography>
+				<Typography variant="title1">Welcome Back!</Typography>
 				<View style={styles.searchView}>
 					<TextInput
 						style={styles.searchInput}

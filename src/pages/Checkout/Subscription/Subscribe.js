@@ -9,6 +9,7 @@ import {
 	ScrollView,
 	SliderBase,
 } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Typography from './../../../components/Typography';
 import Input from './../../../components/Input';
 import Button from './../../../components/Button';
@@ -98,25 +99,32 @@ function Cart(props) {
 			const result = await RNIap.initConnection();
 			console.log({ result });
 		}
-		purchaseErrorListener(async (error) => {
-			Alert.alert("Error", error.message);
-		});
-		RNIap.purchaseUpdatedListener(async (purchase) => {
+		let errorListener = purchaseErrorListener((err) => console.log(err));
+		let purchaseListener = RNIap.purchaseUpdatedListener(async (purchase) => {
 			try {
 				const receipt = purchase.transactionId;
 				if (receipt && isPurchasing) {
+					dispatch({type: 'SET_LOADING', loading: true});
+					purchaseListener.remove();
+					purchaseListener = null;
+					// setIsPurchasing(false);
 					if (state.user && state.user.CustomerID) {
 						const response = await services.post(
 							`?action=GetSubscription&CustomerID=${state.user.CustomerID}`,
 						);
 						console.log(response);
 						setIsPurchasing(false);
+						dispatch({type: 'SET_LOADING', loading: false});
 						if (response.res && response.status === 200) {
 							Alert.alert("Success", response.res.data, [{
 								text: "OK", onPress: () => {
-									const url = `?action=GetCustomerDetailByID&CustomerID=${userData.CustomerID}`;
+
+									// dispatch({type: 'SET_LOADING', loading: true});	
+									const url = `?action=GetCustomerDetailByID&CustomerID=${state.user.CustomerID}`;
 									services.post(url).then(async (res) => {
 										console.log('response', res);
+
+										dispatch({type: 'SET_LOADING', loading: false});	
 										if (res.status === 200) {
 											if (res.res.success === '0') {
 												Alert.alert('Login Failure', res.res.data);
@@ -126,9 +134,11 @@ function Cart(props) {
 													'user',
 													JSON.stringify({ ...res.res }),
 												);
+
+												dispatch({type: 'SET_LOADING', loading: false});
 												navigation.dispatch(
 													StackActions.replace('Home', {
-														params: { user: { ...credential } },
+														params: { user: { ...res.res } },
 													}),
 												);
 											}
@@ -141,31 +151,37 @@ function Cart(props) {
 											}
 											Alert.alert('Network Error', message);
 										}
-										// navigation.dispatch(
-										// 	StackActions.replace('Home', {
-										// 		params: {user: {...userData}},
-										// 	}),
-										// );
 									});
 								}
 							}]);
 						} else {
+
+							dispatch({type: 'SET_LOADING', loading: false});
 							Alert.alert("Failed", "Failed to purchase. Contact support team.");
 						}
 					}
 				}
 			} catch (err) {
+
+				dispatch({type: 'SET_LOADING', loading: false});
 				Alert.alert('Listener error', err.message);
 			}
 		});
 		init();
+		return () => {
+			console.log('called unmount')
+			
+			errorListener.remove();
+			errorListener = null;
+			setIsPurchasing(false);
+		}
 	}, [state.user, isPurchasing]);
 
 	return (
 		<ScrollablePageView
 			header={<Header navigation={navigation} state={state} />}
 			bottomBar={
-				isExpired(state.user.PlanExpire) && <Button
+				!isExpired(state.user.PlanExpire) && <Button
 					title="Subscribe Now"
 					style={styles.continueButton}
 					onPress={handleContinue}
@@ -178,7 +194,7 @@ function Cart(props) {
 						Current Subscription
 					</Typography>
 					<Typography variant="title2" style={styles.total}>
-						{`$ 19.99/m`}
+						{`$ 16.99/m`}
 					</Typography>
 				</View>
 				{

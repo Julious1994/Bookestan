@@ -20,6 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {StackActions} from '@react-navigation/native';
 import Input from '../../components/Input';
 import {logout} from './Logout';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const services = new Service();
 
@@ -105,10 +106,11 @@ function ChangePassword(props) {
 					onChange={(value) => handleChange('newPassword', value)}
 					left={true}
 					icon={
-						<Image
-							source={imageMapper.messages.source}
-							style={styles.inputIcon}
-							resizeMode="contain"
+						<Icon
+							name="lock"
+							size={22}
+							color="#113228"
+							style={styles.lockIcon}
 						/>
 					}
 				/>
@@ -121,10 +123,11 @@ function ChangePassword(props) {
 					onChange={(value) => handleChange('confirmPassword', value)}
 					left={true}
 					icon={
-						<Image
-							source={imageMapper.messages.source}
-							style={styles.inputIcon}
-							resizeMode="contain"
+						<Icon
+							name="lock"
+							size={22}
+							color="#113228"
+							style={styles.lockIcon}
 						/>
 					}
 				/>
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 36,
 		paddingRight: 36,
 		paddingTop: 8,
-		height: '58%',
+		height: '56%',
 	},
 	fieldTitle: {
 		marginTop: 12,
@@ -198,6 +201,11 @@ const styles = StyleSheet.create({
 	input: {
 		marginTop: 10,
 		marginBottom: 10,
+	},
+	lockIcon: {
+		marginTop: 12,
+		marginLeft: 1,
+		marginRight: 5,
 	},
 	inputIcon: {
 		width: 16,

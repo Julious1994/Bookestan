@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 36,
 		paddingRight: 36,
 		paddingTop: 36,
-		height: '58%',
+		height: '56%',
 	},
 	fieldTitle: {
 		marginTop: 12,

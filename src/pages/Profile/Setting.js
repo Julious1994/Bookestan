@@ -91,7 +91,7 @@ function Setting(props) {
 						<TouchableOpacity
 							style={styles.changePasswordIcon}
 							onPress={handleSubscribe}>
-							<Icon name="lock" size={24} />
+							<Icon name="credit-card" size={24} />
 							<Typography
 								variant="title3"
 								containerStyle={styles.optionTitleContainer}
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 	profileTitle: {
 		color: '#fff',
 	},
-	content: {height: '66.2%', position: 'relative', paddingTop: 60},
+	content: {height: '64%', position: 'relative', paddingTop: 60},
 	userName: {
 		alignSelf: 'center',
 		marginTop: 5,

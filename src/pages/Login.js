@@ -58,13 +58,37 @@ function Login(props) {
 					if (res.res.success === '0') {
 						Alert.alert('Login Failure', res.res.data);
 					} else {
-						dispatch({type: 'SET_USER', userData: res.res});
-						await AsyncStorage.setItem('user', JSON.stringify({...res.res}));
-						navigation.dispatch(
-							StackActions.replace('Home', {
-								params: {user: {...credential}},
-							}),
-						);
+						const userData = res.res;
+						const custUrl = `?action=GetCustomerDetailByID&CustomerID=${userData.CustomerID}`;
+						services.post(custUrl).then(async (res) => {
+							console.log('response user details', res);
+							if (res.status === 200) {
+								if (res.res.success === '0') {
+									Alert.alert('Login Failure', res.res.data);
+								} else {
+									dispatch({type: 'SET_USER', userData: res.res});
+									await AsyncStorage.setItem('user', JSON.stringify({...res.res}));
+									navigation.dispatch(
+										StackActions.replace('Home', {
+											params: {user: {...credential}},
+										}),
+									);
+								}
+							} else {
+								let message = '';
+								if (Array.isArray(res.res)) {
+									message = res.res[0];
+								} else {
+									message = res.res || res.res.Message;
+								}
+								Alert.alert('Network Error', message);
+							}
+							// navigation.dispatch(
+							// 	StackActions.replace('Home', {
+							// 		params: {user: {...userData}},
+							// 	}),
+							// );
+						});
 					}
 				} else {
 					let message = '';
@@ -88,7 +112,7 @@ function Login(props) {
 				const userData = user ? JSON.parse(user) : {};
 				const url = `?action=GetCustomerDetailByID&CustomerID=${userData.CustomerID}`;
 				services.post(url).then(async (res) => {
-					console.log('response', res);
+					console.log('response user details', res);
 					if (res.status === 200) {
 						if (res.res.success === '0') {
 							Alert.alert('Login Failure', res.res.data);

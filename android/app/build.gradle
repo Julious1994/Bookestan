@@ -132,9 +132,9 @@ android {
         applicationId "com.bookestan"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-				multiDexEnabled true
+        versionCode 7
+        versionName "1.0.5"
+		multiDexEnabled true
     }
     splits {
         abi {

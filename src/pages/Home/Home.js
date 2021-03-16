@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
 	},
 	bookContent: {
 		marginLeft: 32,
-		marginBottom: 10,
+		marginBottom: 75,
 	},
 	loader: {
 		alignSelf: 'center',

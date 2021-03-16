@@ -49,21 +49,22 @@ function BookProfile(props) {
 				const listened = await services.get(
 					`?action=DisplayListendAudioBook&CustomerID=${state.user.CustomerID}`,
 				);
+				console.log(listened);
 				if (listened.success === '1') {
 					setData([...listened.data]);
 				}
 				break;
 			}
+			// case 1: {
+			// 	const purchased = await services.get(
+			// 		`?action=PurchaseBookListbyCustomerId&CustomerID=${state.user.CustomerID}`,
+			// 	);
+			// 	if (purchased.success === '1') {
+			// 		setData([...purchased.data]);
+			// 	}
+			// 	break;
+			// }
 			case 1: {
-				const purchased = await services.get(
-					`?action=PurchaseBookListbyCustomerId&CustomerID=${state.user.CustomerID}`,
-				);
-				if (purchased.success === '1') {
-					setData([...purchased.data]);
-				}
-				break;
-			}
-			case 2: {
 				const liked = await services.get(
 					`?action=BookLikeHistoryByCustomerID&CustomerID=${state.user.CustomerID}`,
 				);
@@ -134,7 +135,7 @@ function BookProfile(props) {
 						/>
 					))}
 				</View>
-				<ScrollView style={{height: '49%'}}>
+				<ScrollView style={{height: '46.2%'}}>
 					{loading ? (
 						<ActivityIndicator
 							style={styles.loader}
@@ -162,7 +163,7 @@ function BookProfile(props) {
 										lines={1}
 										variant="title3"
 										style={styles.bookName}>
-										{item.Title}
+										{`${item.Title} - ${item.Name}`}
 									</Typography>
 									<Typography>
 										{moment(item.PublishDate).format('MMM DD / YYYY')}

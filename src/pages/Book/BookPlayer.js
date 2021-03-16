@@ -82,6 +82,7 @@ function BookPlayer(props) {
 				resizeMode="cover"
 				source={{uri: book.BookPath}}
 				style={styles.videoView}
+				playInBackground={true}
 			/>
 		</React.Fragment>
 	);

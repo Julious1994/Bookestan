@@ -181,7 +181,7 @@ function Cart(props) {
 		<ScrollablePageView
 			header={<Header navigation={navigation} state={state} />}
 			bottomBar={
-				!isExpired(state.user.PlanExpire) && <Button
+				<Button
 					title="Subscribe Now"
 					style={styles.continueButton}
 					onPress={handleContinue}

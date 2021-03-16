@@ -108,6 +108,10 @@ const styles = StyleSheet.create({
 		shadowRadius: 2,
 		// shadowOpacity: 1,
 		elevation: 4,
+		position: 'absolute',
+		bottom: 0,
+		height: 73.5,
+		width: '100%'
 	},
 	menuImage: {
 		width: 18,

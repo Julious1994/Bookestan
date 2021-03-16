@@ -1,7 +1,7 @@
 // import AsyncStorage from '@react-native-community/async-storage';
 
-const joinURL = (baseURL, url) => {
-	return `${baseURL}/${url}`;
+const joinURL = (baseURL, url = '') => {
+	return url.startsWith('?') ? `${baseURL}${url}` : `${baseURL}/${url}`;
 };
 
 let Headers = {
@@ -11,7 +11,7 @@ let Headers = {
 class Service {
 	constructor(props = {}) {
 		this.baseURL =
-			'http://bookestan.com/AudioBook/AudioBookWebservices/webservices/index.php';
+			'https://bookestan.com/AudioBook/AudioBookWebservices/webservices/index.php';
 		this.token = props.token;
 	}
 

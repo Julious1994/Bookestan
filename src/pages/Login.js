@@ -54,6 +54,7 @@ function Login(props) {
 			const url = `?action=LoginAPI&Email=${credential.Email}&Password=${credential.Password}`;
 			services.post(url).then(async (res) => {
 				dispatch({type: 'SET_LOADING', loading: false});
+				console.log('login', res);
 				if (res.status === 200) {
 					if (res.res.success === '0') {
 						Alert.alert('Login Failure', res.res.data);

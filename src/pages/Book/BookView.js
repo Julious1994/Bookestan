@@ -76,6 +76,7 @@ function BookView(props) {
 	}, [email, navigation, dispatch]);
 
 	const handleBack = React.useCallback(() => {
+		AudioPlayer.pause();
 		navigation.goBack();
 	}, [navigation]);
 
@@ -133,6 +134,8 @@ function BookView(props) {
 	}, [state, bookDetails, dispatch]);
 
 	const handleListen = React.useCallback(() => {
+		AudioPlayer.pause();
+		setPause(true);
 		if(isExpired(state.user.PlanExpire)) {
 			navigation.dispatch(StackActions.push('Subscribe', {bookDetails}));
 		} else {
@@ -266,7 +269,7 @@ function BookView(props) {
 							<Typography variant="title2" style={styles.aboutText}>
 								About The Book
 							</Typography>
-							<ScrollView style={{height: '42%'}}>
+							<ScrollView style={{height: '37%'}}>
 								<Typography variant="description" style={styles.description}>
 									{bookDetails.Description}
 								</Typography>
